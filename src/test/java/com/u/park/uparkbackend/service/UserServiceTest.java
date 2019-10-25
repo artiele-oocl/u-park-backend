@@ -2,24 +2,22 @@ package com.u.park.uparkbackend.service;
 
 import com.u.park.uparkbackend.model.User;
 import com.u.park.uparkbackend.repository.UserRepository;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-public class UserServiceTest {
+class UserServiceTest {
 
     @MockBean
     private UserRepository userRepository;
@@ -30,9 +28,20 @@ public class UserServiceTest {
     @Test
     void createUser_should_return_user() {
         User user = createUser("Juan Dela Cruz", "juan@oocl.com", "09999999999", "password");
+
         when(userRepository.save(user)).thenReturn(user);
 
         assertThat(userService.createUser(user), is(notNullValue()));
+    }
+
+    @Test
+    void getUsers_should_return_users() {
+        User user1 = createUser("Juan Dela Cruz", "juan@oocl.com", "09999999999", "password");
+        User user2 = createUser("Jose Rizal", "jose@oocl.com", "08888888888", "password2");
+
+        when(userRepository.findAll()).thenReturn(asList(user1, user2));
+
+        assertThat(userService.getUsers(), containsInAnyOrder(user1, user2));
     }
 
     private User createUser(String name, String email, String phoneNumber, String password) {

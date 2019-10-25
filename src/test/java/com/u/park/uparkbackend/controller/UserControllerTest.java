@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.any;
