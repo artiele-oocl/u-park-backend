@@ -48,9 +48,19 @@ class UserServiceTest {
         assertThat(userService.getUsers(), containsInAnyOrder(user1, user2));
     }
 
+    //todo: find a way to trigger actual ConstraintViolationException from JPA for testing
     @Test
     void createUser_should_throw_bad_request_exception_when_email_is_not_valid_format() {
         User user = createUser("Juan Dela Cruz", "juanooclcom", "09999999999", "password");
+
+        doThrow(ConstraintViolationException.class).when(userRepository).save(user);
+
+        assertThrows(BadHttpRequest.class, () -> userService.createUser(user));
+    }
+
+    @Test
+    void createUser_should_throw_bad_request_exception_when_phone_number_is_not_valid_format() {
+        User user = createUser("Juan Dela Cruz", "juan@oocl.com", "111", "password");
 
         doThrow(ConstraintViolationException.class).when(userRepository).save(user);
 

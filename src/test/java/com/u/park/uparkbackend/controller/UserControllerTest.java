@@ -71,8 +71,8 @@ class UserControllerTest {
     }
 
     @Test
-    void createUser_should_return_status_code_400_when_given_invalid_email_format() throws Exception {
-        User user = createUser("Juan Dela Cruz", "juanooclcom", "09999999999", "password");
+    void createUser_should_return_status_code_400_when_given_invalid_input() throws Exception {
+        User user = createUser("Juan Dela Cruz", "juanooclcom", "111", "password");
 
         doThrow(BadHttpRequest.class).when(userService).createUser(any());
 

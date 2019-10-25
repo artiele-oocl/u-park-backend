@@ -17,6 +17,8 @@ public class User {
     @Pattern(regexp=".+@.+\\..+",
             message="{invalid.email}")
     private String Email;
+
+    @Pattern(regexp="\\d{11}")
     private String PhoneNumber;
     private String Password;
 
