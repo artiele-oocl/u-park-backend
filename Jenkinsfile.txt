@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+               script {
+                    bat './gradlew build'
+               }
+            }
+        }
+        stage('Unit Test') {
+            steps {
+               script {
+                   try {
+                       bat './gradlew clean test --no-daemon'
+                   } finally {
+                       junit '**/build/test-results/test/*.xml'
+                   }
+               }
+            }
+        }
+    }
+}
