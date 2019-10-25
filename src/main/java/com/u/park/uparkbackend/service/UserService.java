@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
 
+import static org.springframework.util.StringUtils.isEmpty;
+
 @Service
 public class UserService {
 
@@ -25,5 +27,18 @@ public class UserService {
 
     public List<User> getUsers() {
         return userRepository.findAll();
+    }
+
+    public User findUserByUsernameAndPassword(User user) {
+        String username = getUserName(user.getEmail(), user.getPhoneNumber());
+        String password = user.getPassword();
+        if (isEmpty(username) || isEmpty(password)) {
+            return null;
+        }
+        return userRepository.findOneByUsernameAndPassword(username, password);
+    }
+
+    private String getUserName(String email, String phoneNumber) {
+        return !isEmpty(email) ? email : phoneNumber;
     }
 }

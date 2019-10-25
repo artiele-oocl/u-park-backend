@@ -18,7 +18,7 @@ public class User {
             message="{invalid.email}")
     private String email;
 
-    @Pattern(regexp="\\d{11}")
+    @Pattern(regexp="[0-9]{11}")
     private String phoneNumber;
     private String password;
 

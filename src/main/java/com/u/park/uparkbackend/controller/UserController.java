@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static java.util.Objects.isNull;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -30,4 +31,13 @@ public class UserController {
         return new ResponseEntity<>(userService.getUsers(), HttpStatus.OK);
     }
 
+    @RequestMapping(path = "/login")
+    @PostMapping(produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> getUserByUsernameAndPassword(@RequestBody User user) {
+        User isExisting = userService.findUserByUsernameAndPassword(user);
+        if (isNull(isExisting)) {
+            return new ResponseEntity<>(new User(), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(isExisting, HttpStatus.OK);
+    }
 }
