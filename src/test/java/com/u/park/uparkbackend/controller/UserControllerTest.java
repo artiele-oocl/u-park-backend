@@ -14,10 +14,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
+import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,12 +35,8 @@ class UserControllerTest {
     private MockMvc mvc;
 
     @Test
-    void should_create_user_when_all_values_are_present() throws Exception {
-        User user = new User();
-        user.setName("Juan Dela Cruz");
-        user.setEmail("juan@oocl.com");
-        user.setPhoneNumber("09999999999");
-        user.setPassword(getMd5("Password"));
+    void createUser_should_create_user_when_all_values_are_present() throws Exception {
+        User user = createUser("Juan Dela Cruz", "juan@oocl.com", "09999999999", "password");
 
         when(userService.createUser(any())).thenReturn(user);
 
@@ -49,7 +48,33 @@ class UserControllerTest {
                 .andExpect((jsonPath("$.name").value("Juan Dela Cruz")))
                 .andExpect((jsonPath("$.email").value("juan@oocl.com")))
                 .andExpect((jsonPath("$.phoneNumber").value("09999999999")));
+    }
 
+    @Test
+    void getUsers_should_return_list_of_all_users() throws Exception {
+        User user1 = createUser("Juan Dela Cruz", "juan@oocl.com", "09999999999", "password");
+        User user2 = createUser("Jose Rizal", "jose@oocl.com", "08888888888", "password2");
+
+        when(userService.getUsers()).thenReturn(asList(user1, user2));
+
+        ResultActions result = mvc.perform(get("/api/users"));
+
+        result.andExpect(status().isOk())
+                .andExpect((jsonPath("$[0].name").value("Juan Dela Cruz")))
+                .andExpect((jsonPath("$[0].email").value("juan@oocl.com")))
+                .andExpect((jsonPath("$[0].phoneNumber").value("09999999999")))
+                .andExpect((jsonPath("$[1].name").value("Jose Rizal")))
+                .andExpect((jsonPath("$[1].email").value("jose@oocl.com")))
+                .andExpect((jsonPath("$[1].phoneNumber").value("08888888888")));
+    }
+
+    private User createUser(String name, String email, String phoneNumber, String password) {
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPhoneNumber(phoneNumber);
+        user.setPassword(getMd5(password));
+        return user;
     }
 
     private String mapToJson(Object obj) throws JsonProcessingException {
