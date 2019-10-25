@@ -2,11 +2,13 @@ package com.u.park.uparkbackend.service;
 
 import com.u.park.uparkbackend.model.User;
 import com.u.park.uparkbackend.repository.UserRepository;
+import javassist.tools.web.BadHttpRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import javax.validation.ConstraintViolationException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -14,6 +16,8 @@ import java.security.NoSuchAlgorithmException;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -26,7 +30,7 @@ class UserServiceTest {
     private UserService userService;
 
     @Test
-    void createUser_should_return_user() {
+    void createUser_should_return_user() throws BadHttpRequest {
         User user = createUser("Juan Dela Cruz", "juan@oocl.com", "09999999999", "password");
 
         when(userRepository.save(user)).thenReturn(user);
@@ -42,6 +46,15 @@ class UserServiceTest {
         when(userRepository.findAll()).thenReturn(asList(user1, user2));
 
         assertThat(userService.getUsers(), containsInAnyOrder(user1, user2));
+    }
+
+    @Test
+    void createUser_should_throw_bad_request_exception_when_email_is_not_valid_format() {
+        User user = createUser("Juan Dela Cruz", "juanooclcom", "09999999999", "password");
+
+        doThrow(ConstraintViolationException.class).when(userRepository).save(user);
+
+        assertThrows(BadHttpRequest.class, () -> userService.createUser(user));
     }
 
     private User createUser(String name, String email, String phoneNumber, String password) {

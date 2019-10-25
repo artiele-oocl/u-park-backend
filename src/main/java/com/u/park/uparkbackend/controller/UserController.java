@@ -2,6 +2,7 @@ package com.u.park.uparkbackend.controller;
 
 import com.u.park.uparkbackend.model.User;
 import com.u.park.uparkbackend.service.UserService;
+import javassist.tools.web.BadHttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping(produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@RequestBody User user) throws BadHttpRequest {
         return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
     }
 

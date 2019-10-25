@@ -4,10 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.u.park.uparkbackend.model.User;
 import com.u.park.uparkbackend.service.UserService;
+import javassist.tools.web.BadHttpRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -17,6 +19,7 @@ import java.security.NoSuchAlgorithmException;
 
 import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -65,6 +68,20 @@ class UserControllerTest {
                 .andExpect((jsonPath("$[1].name").value("Jose Rizal")))
                 .andExpect((jsonPath("$[1].email").value("jose@oocl.com")))
                 .andExpect((jsonPath("$[1].phoneNumber").value("08888888888")));
+    }
+
+    @Test
+    void createUser_should_return_status_code_400_when_given_invalid_email_format() throws Exception {
+        User user = createUser("Juan Dela Cruz", "juanooclcom", "09999999999", "password");
+
+        doThrow(BadHttpRequest.class).when(userService).createUser(any());
+
+        ResultActions result = mvc.perform(post("/api/users")
+                .contentType(APPLICATION_JSON)
+                .content(mapToJson(user)));
+
+        result.andExpect(status().isBadRequest())
+                .andExpect((jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value())));
     }
 
     private User createUser(String name, String email, String phoneNumber, String password) {
