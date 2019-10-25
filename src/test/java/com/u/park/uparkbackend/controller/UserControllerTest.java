@@ -35,7 +35,7 @@ class UserControllerTest {
     private MockMvc mvc;
 
     @Test
-    void createUser_should_create_user_when_all_values_are_present() throws Exception {
+    void createUser_should_create_user_when_all_values_are_present_and_return_status_code_201() throws Exception {
         User user = createUser("Juan Dela Cruz", "juan@oocl.com", "09999999999", "password");
 
         when(userService.createUser(any())).thenReturn(user);
@@ -51,7 +51,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUsers_should_return_list_of_all_users() throws Exception {
+    void getUsers_should_return_list_of_all_users_and_return_status_code_200() throws Exception {
         User user1 = createUser("Juan Dela Cruz", "juan@oocl.com", "09999999999", "password");
         User user2 = createUser("Jose Rizal", "jose@oocl.com", "08888888888", "password2");
 
