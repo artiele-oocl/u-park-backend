@@ -1,5 +1,7 @@
 package com.u.park.uparkbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,6 +22,7 @@ public class User {
 
     @Pattern(regexp="[0-9]{11}")
     private String phoneNumber;
+    
     private String password;
 
     public Long getId() {
