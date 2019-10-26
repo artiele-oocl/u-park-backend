@@ -2,7 +2,6 @@ package com.u.park.uparkbackend.controller;
 
 import com.u.park.uparkbackend.model.ParkingLot;
 import com.u.park.uparkbackend.service.ParkingLotService;
-import com.u.park.uparkbackend.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -29,7 +28,7 @@ public class ParkingLotControllerTest {
     @Test
     void getParkingLots_should_return_list_of_all_parking_lots_and_return_status_code_200() throws Exception {
         ParkingLot parkingLot1 = createParkingLot(12345L, "Scape parking lot", 20, "24 Diosdado Macapagal Blvd, Pasay, Metro Manila", 14.538540, 120.988510);
-        ParkingLot parkingLot2 = createParkingLot(6789L, "Double dragon parking lot", 20, "2850 Epifanio de los Santos Ave, Pasay, 1308 Metro Manila", 15.538540, 121.988510);
+        ParkingLot parkingLot2 = createParkingLot(6789L, "Double dragon parking lot", 30, "2850 Epifanio de los Santos Ave, Pasay, 1308 Metro Manila", 15.538540, 121.988510);
 
         when(parkingLotService.getParkingLots()).thenReturn(Arrays.asList(parkingLot1, parkingLot2));
 
