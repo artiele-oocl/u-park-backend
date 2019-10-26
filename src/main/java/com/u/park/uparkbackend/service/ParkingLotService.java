@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ParkingLotService {
@@ -28,7 +30,9 @@ public class ParkingLotService {
                 nearestParkingLotsAndDistance.add(convertToParkingLotsAndDistance(parkingLot, distance));
             }
         }
-        return nearestParkingLotsAndDistance;
+        return nearestParkingLotsAndDistance.stream()
+                .sorted(Comparator.comparingDouble(ParkingLotAndDistance::getDistance))
+                .collect(Collectors.toList());
     }
 
     private ParkingLotAndDistance convertToParkingLotsAndDistance(ParkingLot parkingLot, Double distance) {
