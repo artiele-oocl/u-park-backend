@@ -15,6 +15,7 @@ public class ParkingLot {
     private String address;
     private Double latitude;
     private Double longitude;
+    private Float rate;
 
     public Long getId() {
         return id;
@@ -62,5 +63,13 @@ public class ParkingLot {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public Float getRate() {
+        return rate;
+    }
+
+    public void setRate(Float rate) {
+        this.rate = rate;
     }
 }
