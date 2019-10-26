@@ -18,6 +18,7 @@ public class UserService {
     private UserRepository userRepository;
 
     public User createUser(User user) throws BadHttpRequest {
+        if (!isEmpty(userRepository.findUserByPhoneNumber(user.getPhoneNumber()))) throw new BadHttpRequest();
         try {
             return userRepository.save(user);
         } catch (ConstraintViolationException e) {
