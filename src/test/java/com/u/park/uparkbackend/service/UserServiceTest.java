@@ -19,6 +19,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -37,7 +38,7 @@ class UserServiceTest {
 
     @Test
     void createUser_should_return_user() throws BadHttpRequest {
-        User user = createUser("Juan Dela Cruz", "juan@oocl.com", "09999999999");
+        User user = createUser("Juan Dela Cruz", "juan@oocl.com", "09999999999", "password");
 
         when(userRepository.save(user)).thenReturn(user);
 
@@ -46,8 +47,8 @@ class UserServiceTest {
 
     @Test
     void getUsers_should_return_users() {
-        User user1 = createUser("Juan Dela Cruz", "juan@oocl.com", "09999999999");
-        User user2 = createUser("Jose Rizal", "jose@oocl.com", "08888888888");
+        User user1 = createUser("Juan Dela Cruz", "juan@oocl.com", "09999999999", "password");
+        User user2 = createUser("Jose Rizal", "jose@oocl.com", "08888888888", "password2");
 
         UserDto userDto1 =  modelMapper.map(user1, UserDto.class);
         UserDto userDto2 = modelMapper.map(user2, UserDto.class);
@@ -57,6 +58,23 @@ class UserServiceTest {
 
         assertThat(user1.getName(), is(returnedUserDtoList.get(0).getName()));
         assertThat(user2.getName(), is(returnedUserDtoList.get(1).getName()));
+    }
+
+    private String HashPassword(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] messageDigest = md.digest(input.getBytes());
+            BigInteger no = new BigInteger(1, messageDigest);
+            String hashtext = no.toString(16);
+            while (hashtext.length() < 32) {
+                hashtext = "0" + hashtext;
+            }
+            return hashtext;
+        }
+
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //todo: find a way to trigger actual ConstraintViolationException from JPA for testing
@@ -78,11 +96,12 @@ class UserServiceTest {
 //        assertThrows(BadHttpRequest.class, () -> userService.createUser(user));
 //    }
 
-    private User createUser(String name, String email, String phoneNumber) {
+    private User createUser(String name, String email, String phoneNumber, String password) {
         User user = new User();
         user.setName(name);
         user.setEmail(email);
         user.setPhoneNumber(phoneNumber);
+        user.setPassword(password);
         return user;
     }
 }

@@ -28,7 +28,7 @@ public class UserController {
         if (isNull(userDto)) {
             return null;
         }
-        return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
+        return new ResponseEntity<>(userDto, HttpStatus.CREATED);
     }
 
     @GetMapping(produces = APPLICATION_JSON_VALUE)

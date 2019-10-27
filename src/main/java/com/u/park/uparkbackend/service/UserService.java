@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolationException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,10 +28,10 @@ public class UserService {
 
     public UserDto createUser(User user) throws BadHttpRequest {
         User existingUser = userRepository.findUserByPhoneNumberOrEmail(user.getPhoneNumber(), user.getEmail());
-        if (!isEmpty(existingUser))
-            throw new BadHttpRequest();
+        if (!isEmpty(existingUser))  throw new BadHttpRequest();
 
         try {
+            user.setPassword(hashPassword(user.getPassword()));
             userRepository.save(user);
             return modelMapper.map(user, UserDto.class);
         } catch (ConstraintViolationException e) {
@@ -47,7 +50,7 @@ public class UserService {
 
     public UserDto findUserByUsernameAndPassword(User user) {
         String username = getUserName(user.getEmail(), user.getPhoneNumber());
-        String password = user.getPassword();
+        String password = hashPassword(user.getPassword());
         if (isEmpty(username) || isEmpty(password)) {
             return null;
         }
@@ -58,5 +61,22 @@ public class UserService {
 
     private String getUserName(String email, String phoneNumber) {
         return !isEmpty(email) ? email : phoneNumber;
+    }
+
+    private String hashPassword(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] messageDigest = md.digest(input.getBytes());
+            BigInteger no = new BigInteger(1, messageDigest);
+            String hashtext = no.toString(16);
+            while (hashtext.length() < 32) {
+                hashtext = "0" + hashtext;
+            }
+            return hashtext;
+        }
+
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
