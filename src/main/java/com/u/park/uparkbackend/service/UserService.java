@@ -4,6 +4,7 @@ import com.u.park.uparkbackend.dto.UserDto;
 import com.u.park.uparkbackend.model.User;
 import com.u.park.uparkbackend.repository.UserRepository;
 import javassist.tools.web.BadHttpRequest;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,40 +20,28 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public UserDto createUser(User user) throws BadHttpRequest {
-        if (!isEmpty(userRepository.findUserByPhoneNumber(user.getPhoneNumber()))
-                || !isEmpty(userRepository.findUserByEmail(user.getEmail())))
-            throw new BadHttpRequest();
-        try {
-            User userEntity = userRepository.save(user);
-            UserDto userDto = new UserDto();
-            userDto.setId(userEntity.getId());
-            userDto.setName(userEntity.getName());
-            userDto.setEmail(userEntity.getEmail());
-            userDto.setPhoneNumber((userEntity.getPhoneNumber()));
+    @Autowired
+    private ModelMapper modelMapper;
 
-            return userDto;
+    public UserDto createUser(User user) throws BadHttpRequest {
+        User existingUser = userRepository.findUserByPhoneNumberOrEmail(user.getPhoneNumber(), user.getEmail());
+        if (!isEmpty(existingUser))
+            throw new BadHttpRequest();
+
+        try {
+            userRepository.save(user);
+            return modelMapper.map(user, UserDto.class);
         } catch (ConstraintViolationException e) {
             throw new BadHttpRequest();
         }
     }
 
     public List<UserDto> getUsers() {
-        List<User> userEntityList = userRepository.findAll();
-
         List<UserDto> userDtoList = new ArrayList<>();
-
-        for (User userEntity : userEntityList) {
-            UserDto userDto = new UserDto();
-
-            userDto.setId(userEntity.getId());
-            userDto.setName(userEntity.getName());
-            userDto.setEmail(userEntity.getEmail());
-            userDto.setPhoneNumber(userEntity.getPhoneNumber());
-
+        for (User user : userRepository.findAll()) {
+            UserDto userDto = modelMapper.map(user, UserDto.class);
             userDtoList.add(userDto);
         }
-
         return userDtoList;
     }
 
@@ -63,16 +52,8 @@ public class UserService {
             return null;
         }
 
-        User userEntity = userRepository.findOneByUsernameAndPassword(username, password);
-
-        UserDto userDto = new UserDto();
-
-        userDto.setId(userEntity.getId());
-        userDto.setEmail(userEntity.getEmail());
-        userDto.setName(userEntity.getName());
-        userDto.setPhoneNumber(userEntity.getPhoneNumber());
-
-        return userDto;
+        user = userRepository.findOneByUsernameAndPassword(username, password);
+        return modelMapper.map(user, UserDto.class);
     }
 
     private String getUserName(String email, String phoneNumber) {

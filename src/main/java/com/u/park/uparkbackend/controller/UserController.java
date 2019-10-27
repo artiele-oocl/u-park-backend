@@ -24,6 +24,10 @@ public class UserController {
 
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDto> createUser(@RequestBody User user) throws BadHttpRequest {
+        UserDto userDto = userService.createUser(user);
+        if (isNull(userDto)) {
+            return null;
+        }
         return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
     }
 
