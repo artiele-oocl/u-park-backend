@@ -1,5 +1,6 @@
 package com.u.park.uparkbackend.controller;
 
+import com.u.park.uparkbackend.dto.UserDto;
 import com.u.park.uparkbackend.model.User;
 import com.u.park.uparkbackend.service.UserService;
 import javassist.tools.web.BadHttpRequest;
@@ -22,21 +23,25 @@ public class UserController {
     private UserService userService;
 
     @PostMapping(produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createUser(@RequestBody User user) throws BadHttpRequest {
-        return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
+    public ResponseEntity<UserDto> createUser(@RequestBody User user) throws BadHttpRequest {
+        UserDto userDto = userService.createUser(user);
+        if (isNull(userDto)) {
+            return null;
+        }
+        return new ResponseEntity<>(userDto, HttpStatus.CREATED);
     }
 
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<User>> getUsers() {
+    public ResponseEntity<List<UserDto>> getUsers() {
         return new ResponseEntity<>(userService.getUsers(), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/login")
     @PostMapping(produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> getUserByUsernameAndPassword(@RequestBody User user) {
-        User isExisting = userService.findUserByUsernameAndPassword(user);
+    public ResponseEntity<UserDto> getUserByUsernameAndPassword(@RequestBody User user) {
+        UserDto isExisting = userService.findUserByUsernameAndPassword(user);
         if (isNull(isExisting)) {
-            return new ResponseEntity<>(new User(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new UserDto(), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(isExisting, HttpStatus.OK);
     }
