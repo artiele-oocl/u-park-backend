@@ -2,6 +2,7 @@ package com.u.park.uparkbackend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.u.park.uparkbackend.dto.UserDto;
 import com.u.park.uparkbackend.model.User;
 import com.u.park.uparkbackend.service.UserService;
 import javassist.tools.web.BadHttpRequest;
@@ -38,7 +39,7 @@ class UserControllerTest {
 
     @Test
     void createUser_should_create_user_when_all_values_are_present_and_return_status_code_201() throws Exception {
-        User user = createUser("Juan Dela Cruz", "juan@oocl.com", "09999999999", "password");
+        UserDto user = createDtoUser("Juan Dela Cruz", "juan@oocl.com", "09999999999");
 
         when(userService.createUser(any())).thenReturn(user);
 
@@ -54,8 +55,8 @@ class UserControllerTest {
 
     @Test
     void getUsers_should_return_list_of_all_users_and_return_status_code_200() throws Exception {
-        User user1 = createUser("Juan Dela Cruz", "juan@oocl.com", "09999999999", "password");
-        User user2 = createUser("Jose Rizal", "jose@oocl.com", "08888888888", "password2");
+        UserDto user1 = createDtoUser("Juan Dela Cruz", "juan@oocl.com", "09999999999");
+        UserDto user2 = createDtoUser("Jose Rizal", "jose@oocl.com", "08888888888");
 
         when(userService.getUsers()).thenReturn(asList(user1, user2));
 
@@ -72,7 +73,7 @@ class UserControllerTest {
 
     @Test
     void createUser_should_return_status_code_400_when_given_invalid_input() throws Exception {
-        User user = createUser("Juan Dela Cruz", "juanooclcom", "111", "password");
+        UserDto user = createDtoUser("Juan Dela Cruz", "juanooclcom", "111");
 
         doThrow(BadHttpRequest.class).when(userService).createUser(any());
 
@@ -84,43 +85,16 @@ class UserControllerTest {
                 .andExpect((jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value())));
     }
 
-    private User createUser(String name, String email, String phoneNumber, String password) {
-        User user = new User();
-        user.setName(name);
-        user.setEmail(email);
-        user.setPhoneNumber(phoneNumber);
-        user.setPassword(getMd5(password));
-        return user;
+    private UserDto createDtoUser(String name, String email, String phoneNumber) {
+        UserDto userDto = new UserDto();
+        userDto.setName(name);
+        userDto.setEmail(email);
+        userDto.setPhoneNumber(phoneNumber);
+        return userDto;
     }
 
     private String mapToJson(Object obj) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(obj);
     }
 
-    private String getMd5(String input) {
-        try {
-
-            // Static getInstance method is called with hashing MD5
-            MessageDigest md = MessageDigest.getInstance("MD5");
-
-            // digest() method is called to calculate message digest
-            //  of an input digest() return array of byte
-            byte[] messageDigest = md.digest(input.getBytes());
-
-            // Convert byte array into signum representation
-            BigInteger no = new BigInteger(1, messageDigest);
-
-            // Convert message digest into hex value
-            String hashtext = no.toString(16);
-            while (hashtext.length() < 32) {
-                hashtext = "0" + hashtext;
-            }
-            return hashtext;
-        }
-
-        // For specifying wrong message digest algorithms
-        catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
