@@ -20,11 +20,12 @@ public class UserService {
     private UserRepository userRepository;
 
     public UserDto createUser(User user) throws BadHttpRequest {
+        if (!isEmpty(userRepository.findUserByPhoneNumber(user.getPhoneNumber()))
+                || !isEmpty(userRepository.findUserByEmail(user.getEmail())))
+            throw new BadHttpRequest();
         try {
             User userEntity = userRepository.save(user);
-
             UserDto userDto = new UserDto();
-
             userDto.setId(userEntity.getId());
             userDto.setName(userEntity.getName());
             userDto.setEmail(userEntity.getEmail());
@@ -41,7 +42,7 @@ public class UserService {
 
         List<UserDto> userDtoList = new ArrayList<>();
 
-        for (User userEntity: userEntityList) {
+        for (User userEntity : userEntityList) {
             UserDto userDto = new UserDto();
 
             userDto.setId(userEntity.getId());
