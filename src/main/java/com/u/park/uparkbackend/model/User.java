@@ -16,11 +16,11 @@ public class User {
     private Long id;
     private String name;
 
-    @Pattern(regexp=".+@.+\\..+",
-            message="{invalid.email}")
+    @Pattern(regexp = ".+@.+\\..+",
+            message = "{invalid.email}")
     private String email;
 
-    @Pattern(regexp="[0-9]{11}")
+    @Pattern(regexp = "[0-9]{11}")
     private String phoneNumber;
     
     private String password;
