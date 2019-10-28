@@ -1,6 +1,6 @@
 package com.u.park.uparkbackend.dto;
 
-public class ParkingLotAndDistance {
+public class ParkingLotAndDistanceDto {
 
     private Long id;
     private String name;
@@ -10,6 +10,7 @@ public class ParkingLotAndDistance {
     private Double longitude;
     private Float rate;
     private Double distance;
+    private Double starRating;
 
     public Long getId() {
         return id;
@@ -73,5 +74,13 @@ public class ParkingLotAndDistance {
 
     public void setDistance(Double distance) {
         this.distance = distance;
+    }
+
+    public Double getStarRating() {
+        return starRating;
+    }
+
+    public void setStarRating(Double starRating) {
+        this.starRating = starRating;
     }
 }
