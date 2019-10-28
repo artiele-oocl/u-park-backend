@@ -1,8 +1,9 @@
 package com.u.park.uparkbackend.service;
 
-import com.u.park.uparkbackend.dto.ParkingLotAndDistance;
+import com.u.park.uparkbackend.dto.ParkingLotAndDistanceDto;
 import com.u.park.uparkbackend.model.ParkingLot;
 import com.u.park.uparkbackend.repository.ParkingLotRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,35 +18,27 @@ public class ParkingLotService {
     @Autowired
     private ParkingLotRepository parkingLotRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     public List<ParkingLot> getParkingLots() {
         return parkingLotRepository.findAll();
     }
 
-    public List<ParkingLotAndDistance> getNearestParkingLotsFromLocation(Double latitude, Double longitude) {
+    public List<ParkingLotAndDistanceDto> getNearestParkingLotsFromLocation(Double latitude, Double longitude) {
         List<ParkingLot> parkingLotList = parkingLotRepository.findAll();
-        List<ParkingLotAndDistance> nearestParkingLotsAndDistance = new ArrayList<>();
+        List<ParkingLotAndDistanceDto> nearestParkingLotsAndDistance = new ArrayList<>();
         for (ParkingLot parkingLot : parkingLotList) {
             Double distance = distance(latitude, longitude, parkingLot.getLatitude(), parkingLot.getLongitude());
             if (distance < 2.00) {
-                nearestParkingLotsAndDistance.add(convertToParkingLotsAndDistance(parkingLot, distance));
+                ParkingLotAndDistanceDto parkingLotAndDistanceDto = modelMapper.map(parkingLot, ParkingLotAndDistanceDto.class);
+                parkingLotAndDistanceDto.setDistance(distance);
+                nearestParkingLotsAndDistance.add(parkingLotAndDistanceDto);
             }
         }
         return nearestParkingLotsAndDistance.stream()
-                .sorted(Comparator.comparingDouble(ParkingLotAndDistance::getDistance))
+                .sorted(Comparator.comparingDouble(ParkingLotAndDistanceDto::getDistance))
                 .collect(Collectors.toList());
-    }
-
-    private ParkingLotAndDistance convertToParkingLotsAndDistance(ParkingLot parkingLot, Double distance) {
-        ParkingLotAndDistance parkingLotAndDistance = new ParkingLotAndDistance();
-        parkingLotAndDistance.setId(parkingLot.getId());
-        parkingLotAndDistance.setName(parkingLot.getName());
-        parkingLotAndDistance.setCapacity(parkingLot.getCapacity());
-        parkingLotAndDistance.setAddress(parkingLot.getAddress());
-        parkingLotAndDistance.setLatitude(parkingLot.getLatitude());
-        parkingLotAndDistance.setLongitude(parkingLot.getLongitude());
-        parkingLotAndDistance.setRate(parkingLot.getRate());
-        parkingLotAndDistance.setDistance(distance);
-        return parkingLotAndDistance;
     }
 
     private double distance(double fromLat, double fromLong, double toLat, double toLong) {

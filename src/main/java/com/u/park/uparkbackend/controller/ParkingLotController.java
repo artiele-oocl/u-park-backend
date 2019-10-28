@@ -1,6 +1,6 @@
 package com.u.park.uparkbackend.controller;
 
-import com.u.park.uparkbackend.dto.ParkingLotAndDistance;
+import com.u.park.uparkbackend.dto.ParkingLotAndDistanceDto;
 import com.u.park.uparkbackend.model.ParkingLot;
 import com.u.park.uparkbackend.service.ParkingLotService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class ParkingLotController {
     }
 
     @GetMapping(path = "/nearest", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ParkingLotAndDistance>> getNearestParkingLots(@RequestParam Double latitude, @RequestParam Double longitude) {
+    public ResponseEntity<List<ParkingLotAndDistanceDto>> getNearestParkingLots(@RequestParam Double latitude, @RequestParam Double longitude) {
         return new ResponseEntity<>(parkingLotService.getNearestParkingLotsFromLocation(latitude, longitude), HttpStatus.OK);
     }
 
