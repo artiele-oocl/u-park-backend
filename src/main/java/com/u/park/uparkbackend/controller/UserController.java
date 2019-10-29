@@ -45,4 +45,10 @@ public class UserController {
         }
         return new ResponseEntity<>(isExisting, HttpStatus.OK);
     }
+
+    @RequestMapping(path = "/wallet")
+    @PatchMapping(produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDto> topUpToWallet(@RequestBody User user) {
+        return new ResponseEntity<>(userService.updateUserWallet(user), HttpStatus.OK);
+    }
 }
