@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class TransactionOrderService {
@@ -24,5 +25,8 @@ public class TransactionOrderService {
         return LocalDateTime.now();
     }
 
+    public List<TransactionOrder> getTransactionOrdersOfUser(Long userId) {
+        return transactionOrderRepository.findByUserId(userId);
+    }
 
 }
