@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Objects.isNull;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Service
@@ -89,5 +90,16 @@ public class UserService {
             return modelMapper.map(walletUser, UserDto.class);
         }
         return null;
+    }
+
+    public UserDto updateUser(long id, UserDto userDto) {
+        User user = userRepository.findById(id).orElse(null);
+        if (isNull(user)) {
+            return null;
+        }
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
+        user.setPhoneNumber(userDto.getPhoneNumber());
+        return modelMapper.map(userRepository.save(user), UserDto.class);
     }
 }

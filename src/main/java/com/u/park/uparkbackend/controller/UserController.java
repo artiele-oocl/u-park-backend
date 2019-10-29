@@ -51,4 +51,14 @@ public class UserController {
     public ResponseEntity<UserDto> topUpToWallet(@RequestBody User user) {
         return new ResponseEntity<>(userService.updateUserWallet(user), HttpStatus.OK);
     }
+
+    @PatchMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long id,
+                                              @RequestBody UserDto userDto) {
+        UserDto isUpdated = userService.updateUser(id, userDto);
+        if (isNull(isUpdated)) {
+            return new ResponseEntity<>(new UserDto(), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(isUpdated, HttpStatus.OK);
+    }
 }
