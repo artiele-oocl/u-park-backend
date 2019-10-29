@@ -58,4 +58,9 @@ public class ParkingLotService {
     public List<ParkingLot> createParkingLot(List<ParkingLot> parkingLot) {
         return parkingLotRepository.saveAll(parkingLot);
     }
+
+    public ParkingLot getParkingLotbyId(Long parkingLotId) {
+        return parkingLotRepository.findById(parkingLotId)
+                .orElse(null);
+    }
 }
