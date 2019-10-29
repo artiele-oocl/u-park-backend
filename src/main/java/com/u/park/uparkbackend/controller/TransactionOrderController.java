@@ -1,6 +1,7 @@
 package com.u.park.uparkbackend.controller;
 
 
+import com.u.park.uparkbackend.dto.TransactionOrderDto;
 import com.u.park.uparkbackend.model.TransactionOrder;
 import com.u.park.uparkbackend.service.TransactionOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class TransactionOrderController {
     }
 
     @GetMapping(path = "/{userId}", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<TransactionOrder>> getTransactionOrdersOfUser(@PathVariable Long userId) {
+    public ResponseEntity<List<TransactionOrderDto>> getTransactionOrdersOfUser(@PathVariable Long userId) {
         return new ResponseEntity<>(transactionOrderService.getTransactionOrdersOfUser(userId), OK);
     }
 }
