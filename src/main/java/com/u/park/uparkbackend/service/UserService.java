@@ -14,6 +14,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -28,7 +29,7 @@ public class UserService {
 
     public UserDto createUser(User user) throws BadHttpRequest {
         User existingUser = userRepository.findUserByPhoneNumberOrEmail(user.getPhoneNumber(), user.getEmail());
-        if (!isEmpty(existingUser))  throw new BadHttpRequest();
+        if (!isEmpty(existingUser)) throw new BadHttpRequest();
 
         try {
             user.setPassword(hashPassword(user.getPassword()));
@@ -73,10 +74,20 @@ public class UserService {
                 hashtext = "0" + hashtext;
             }
             return hashtext;
-        }
-
-        catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public UserDto updateUserWallet(User user) {
+        User walletUser;
+        Optional<User> walletOwner = userRepository.findById(user.getId());
+        if (walletOwner.isPresent()) {
+            walletUser = walletOwner.get();
+            walletUser.setWallet(walletUser.getWallet() + user.getWallet());
+            walletUser = userRepository.save(walletUser);
+            return modelMapper.map(walletUser, UserDto.class);
+        }
+        return null;
     }
 }

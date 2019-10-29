@@ -10,6 +10,8 @@ public class UserDto {
 
     private String phoneNumber;
 
+    private Double wallet;
+
     public Long getId() {
         return id;
     }
@@ -40,5 +42,13 @@ public class UserDto {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public Double getWallet() {
+        return wallet;
+    }
+
+    public void setWallet(Double wallet) {
+        this.wallet = wallet;
     }
 }
