@@ -45,4 +45,14 @@ public class UserController {
         }
         return new ResponseEntity<>(isExisting, HttpStatus.OK);
     }
+
+    @PatchMapping(value = "/{id}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDto> updateUser(@PathVariable("id") Long id,
+                                              @RequestBody UserDto userDto) {
+        UserDto isUpdated = userService.updateUser(id, userDto);
+        if (isNull(isUpdated)) {
+            return new ResponseEntity<>(new UserDto(), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(isUpdated, HttpStatus.OK);
+    }
 }

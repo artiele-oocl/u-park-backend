@@ -14,7 +14,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static java.util.Objects.isNull;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Service
@@ -78,5 +80,16 @@ public class UserService {
         catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public UserDto updateUser(long id, UserDto userDto) {
+        User user = userRepository.findById(id).orElse(null);
+        if (isNull(user)) {
+            return null;
+        }
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
+        user.setPhoneNumber(userDto.getPhoneNumber());
+        return modelMapper.map(userRepository.save(user), UserDto.class);
     }
 }
