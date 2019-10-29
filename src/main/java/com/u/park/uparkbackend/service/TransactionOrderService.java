@@ -31,4 +31,11 @@ public class TransactionOrderService {
     }
 
 
+    public void updateRatings(TransactionOrder transactionOrder) {
+        TransactionOrder transOrder = transactionOrderRepository
+                .findOneById(transactionOrder.getId());
+
+        transOrder.setStarRating(transactionOrder.getStarRating());
+        transactionOrderRepository.save(transOrder);
+    }
 }

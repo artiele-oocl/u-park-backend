@@ -12,4 +12,6 @@ public interface TransactionOrderRepository extends JpaRepository<TransactionOrd
 
     @Query("SELECT MAX(trns) FROM TransactionOrder trns WHERE trns.checkOut = null AND trns.userId = ?1")
     TransactionOrder findOneActiveTransactionByUserId(Long userId);
+
+    TransactionOrder findOneById(Long transactionId);
 }

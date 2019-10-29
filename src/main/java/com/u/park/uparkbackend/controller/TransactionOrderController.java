@@ -6,6 +6,8 @@ import com.u.park.uparkbackend.model.TransactionOrder;
 import com.u.park.uparkbackend.service.ParkingLotService;
 import com.u.park.uparkbackend.service.TransactionOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -34,10 +37,19 @@ public class TransactionOrderController {
     @GetMapping(value= "/{userId}",produces = APPLICATION_JSON_VALUE)
     public Map<String, Object> getActiveTransactionOrder (@PathVariable("userId") Long userId){
         Map<String, Object> map = new HashMap<String, Object>();
+
         TransactionOrder transactionOrder = transactionOrderService.getActiveTransactionOrder(userId);
         ParkingLot parkingLot = parkingLotService.getParkingLotbyId(transactionOrder.getParkingLotId());
+
         map.put("transactionOrder", transactionOrder);
         map.put("parkingLot", parkingLot);
+
         return map;
+    }
+
+    @PatchMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public HttpEntity patchTransactionRating (@RequestBody TransactionOrder transactionOrder){
+        transactionOrderService.updateRatings(transactionOrder);
+        return new ResponseEntity(HttpStatus.ACCEPTED);
     }
 }
