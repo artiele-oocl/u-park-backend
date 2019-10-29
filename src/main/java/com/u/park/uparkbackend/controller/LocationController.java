@@ -26,7 +26,7 @@ public class LocationController {
     }
 
     @GetMapping(path = "/search", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Location>> getLocationByName(@RequestParam String name) {
+    public ResponseEntity<Location> getLocationByName(@RequestParam String name) {
         return new ResponseEntity<>(locationService.getLocationByName(name), HttpStatus.OK);
     }
 
