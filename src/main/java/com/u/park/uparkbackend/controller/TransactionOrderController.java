@@ -1,6 +1,5 @@
 package com.u.park.uparkbackend.controller;
 
-
 import com.u.park.uparkbackend.model.ParkingLot;
 import com.u.park.uparkbackend.model.TransactionOrder;
 import com.u.park.uparkbackend.service.ParkingLotService;
@@ -27,12 +26,12 @@ public class TransactionOrderController {
     private ParkingLotService parkingLotService;
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<TransactionOrder> addTransactionOrder (@RequestBody  TransactionOrder transactionOrder){
+    public ResponseEntity<TransactionOrder> addTransactionOrder(@RequestBody TransactionOrder transactionOrder) {
         return new ResponseEntity<>(transactionOrderService.saveTransactionOrder(transactionOrder), CREATED);
     }
 
-    @GetMapping(value= "/{userId}",produces = APPLICATION_JSON_VALUE)
-    public Map<String, Object> getActiveTransactionOrder (@PathVariable("userId") Long userId){
+    @GetMapping(value = "/{userId}", produces = APPLICATION_JSON_VALUE)
+    public Map<String, Object> getActiveTransactionOrder(@PathVariable("userId") Long userId) {
         Map<String, Object> map = new HashMap<String, Object>();
         TransactionOrder transactionOrder = transactionOrderService.getActiveTransactionOrder(userId);
         ParkingLot parkingLot = parkingLotService.getParkingLotbyId(transactionOrder.getParkingLotId());
@@ -40,4 +39,10 @@ public class TransactionOrderController {
         map.put("parkingLot", parkingLot);
         return map;
     }
+
+//    TODO: Adjust frontend mapping for this function
+//    @GetMapping(path = "/{userId}", produces = APPLICATION_JSON_VALUE)
+//    public ResponseEntity<List<TransactionOrderDto>> getTransactionOrdersOfUser(@PathVariable Long userId) {
+//        return new ResponseEntity<>(transactionOrderService.getTransactionOrdersOfUser(userId), OK);
+//    }
 }

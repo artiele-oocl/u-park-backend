@@ -10,6 +10,8 @@ import java.util.List;
 @Repository
 public interface TransactionOrderRepository extends JpaRepository<TransactionOrder, Long> {
 
-    @Query("SELECT MAX(trns) FROM TransactionOrder trns WHERE trns.checkOut = null AND trns.userId = ?1")
+    @Query("SELECT MAX(transaction) FROM TransactionOrder transaction WHERE transaction.checkOut IS NULL AND transaction.userId = ?1")
     TransactionOrder findOneActiveTransactionByUserId(Long userId);
+
+    List<TransactionOrder> findByUserId(Long userId);
 }
