@@ -36,6 +36,11 @@ public class UserController {
         return new ResponseEntity<>(userService.getUsers(), HttpStatus.OK);
     }
 
+    @GetMapping(path = "/{userId}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
+        return new ResponseEntity<>(userService.getUserById(userId), HttpStatus.OK);
+    }
+
     @RequestMapping(path = "/login")
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDto> getUserByUsernameAndPassword(@RequestBody User user) {

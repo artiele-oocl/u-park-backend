@@ -50,6 +50,11 @@ public class UserService {
         return userDtoList;
     }
 
+    public UserDto getUserById(Long userId) {
+        User user = userRepository.findOneById(userId);
+        return modelMapper.map(user, UserDto.class);
+    }
+
     public UserDto findUserByUsernameAndPassword(User user) {
         String username = getUserName(user.getEmail(), user.getPhoneNumber());
         String password = hashPassword(user.getPassword());
