@@ -14,4 +14,6 @@ public interface TransactionOrderRepository extends JpaRepository<TransactionOrd
     TransactionOrder findOneActiveTransactionByUserId(Long userId);
 
     List<TransactionOrder> findByUserId(Long userId);
+
+    TransactionOrder findOneById(Long transactionId);
 }
