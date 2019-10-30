@@ -58,7 +58,7 @@ public class UserService {
         }
 
         user = userRepository.findOneByUsernameAndPassword(username, password);
-        return modelMapper.map(user, UserDto.class);
+        return !isNull(user) ? modelMapper.map(user, UserDto.class) : null;
     }
 
     private String getUserName(String email, String phoneNumber) {
