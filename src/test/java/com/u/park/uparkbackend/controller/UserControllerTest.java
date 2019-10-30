@@ -20,11 +20,11 @@ import java.security.NoSuchAlgorithmException;
 
 import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -83,6 +83,23 @@ class UserControllerTest {
 
         result.andExpect(status().isBadRequest())
                 .andExpect((jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value())));
+    }
+
+    @Test
+    void should_patch_user_details_when_update() throws Exception {
+        UserDto requestItem = createDtoUser("Juan Dela Cruz", "juan@oocl.com", "09999999999");
+        UserDto serviceResponse = createDtoUser("Juan Dela Cruz", "juan@oocl.com", "09999999999");
+
+        when(userService.updateUser(anyLong(), any(UserDto.class))).thenReturn(serviceResponse);
+
+        ResultActions result = mvc.perform(patch("/api/users/1")
+                .contentType(APPLICATION_JSON)
+                .content(mapToJson(requestItem)));
+
+        result.andExpect(status().isOk())
+                .andExpect((jsonPath("$.name").value("Juan Dela Cruz")))
+                .andExpect((jsonPath("$.email").value("juan@oocl.com")))
+                .andExpect((jsonPath("$.phoneNumber").value("09999999999")));
     }
 
     private UserDto createDtoUser(String name, String email, String phoneNumber) {

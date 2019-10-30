@@ -2,10 +2,7 @@ package com.u.park.uparkbackend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 
 @Entity
@@ -24,6 +21,9 @@ public class User {
     private String phoneNumber;
     
     private String password;
+
+    @Column(columnDefinition="decimal(15,2) default '0.0'")
+    private Double wallet;
 
     public Long getId() {
         return id;
@@ -63,5 +63,18 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Double getWallet() {
+        return wallet;
+    }
+
+    public void setWallet(Double wallet) {
+        this.wallet = wallet;
+    }
+
+    @PrePersist
+    public void setWalletDefaultValue(){
+        wallet = 0.0;
     }
 }

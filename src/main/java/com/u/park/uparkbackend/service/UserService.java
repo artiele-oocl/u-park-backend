@@ -14,7 +14,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static java.util.Objects.isNull;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Service
@@ -28,7 +30,7 @@ public class UserService {
 
     public UserDto createUser(User user) throws BadHttpRequest {
         User existingUser = userRepository.findUserByPhoneNumberOrEmail(user.getPhoneNumber(), user.getEmail());
-        if (!isEmpty(existingUser))  throw new BadHttpRequest();
+        if (!isEmpty(existingUser)) throw new BadHttpRequest();
 
         try {
             user.setPassword(hashPassword(user.getPassword()));
@@ -73,10 +75,31 @@ public class UserService {
                 hashtext = "0" + hashtext;
             }
             return hashtext;
-        }
-
-        catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public UserDto updateUserWallet(User user) {
+        User walletUser;
+        Optional<User> walletOwner = userRepository.findById(user.getId());
+        if (walletOwner.isPresent()) {
+            walletUser = walletOwner.get();
+            walletUser.setWallet(walletUser.getWallet() + user.getWallet());
+            walletUser = userRepository.save(walletUser);
+            return modelMapper.map(walletUser, UserDto.class);
+        }
+        return null;
+    }
+
+    public UserDto updateUser(long id, UserDto userDto) {
+        User user = userRepository.findById(id).orElse(null);
+        if (isNull(user)) {
+            return null;
+        }
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
+        user.setPhoneNumber(userDto.getPhoneNumber());
+        return modelMapper.map(userRepository.save(user), UserDto.class);
     }
 }
