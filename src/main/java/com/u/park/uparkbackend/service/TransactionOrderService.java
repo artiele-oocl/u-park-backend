@@ -3,8 +3,10 @@ package com.u.park.uparkbackend.service;
 import com.u.park.uparkbackend.dto.TransactionOrderDto;
 import com.u.park.uparkbackend.model.ParkingLot;
 import com.u.park.uparkbackend.model.TransactionOrder;
+import com.u.park.uparkbackend.model.User;
 import com.u.park.uparkbackend.repository.ParkingLotRepository;
 import com.u.park.uparkbackend.repository.TransactionOrderRepository;
+import com.u.park.uparkbackend.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,9 @@ public class TransactionOrderService {
 
     @Autowired
     private ParkingLotRepository parkingLotRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -77,17 +82,31 @@ public class TransactionOrderService {
                 .orElse(null);
 
         transOrder.setCheckOut(getCurrentTime());
-        Integer hours = Math.toIntExact(
-                transOrder.getCheckIn()
-                        .until(getCurrentTime(), ChronoUnit.HOURS));
-
-        Float totalFee  = hours * parkingLot.getRate();
-        transOrder.setTotalFee(totalFee);
+        calculateTotal(transOrder, parkingLot);
         transactionOrderRepository.save(transOrder);
-
         map.put("transactionOrder", transOrder);
         map.put("parkingLot", parkingLot);
         return map;
 
+    }
+
+    private void calculateTotal(TransactionOrder transOrder, ParkingLot parkingLot) {
+        long minutes = ChronoUnit.MINUTES.between(transOrder.getCheckIn(), getCurrentTime());
+        long hours = ChronoUnit.HOURS.between(transOrder.getCheckIn(), getCurrentTime());
+
+        hours = hours < 1 ? 1 : hours;
+        Float totalFee  = hours * parkingLot.getRate();
+        totalFee = minutes > 1 ? totalFee + parkingLot.getRate(): totalFee;
+        updateWallet(transOrder.getUserId(), totalFee);
+        transOrder.setTotalFee(totalFee);
+
+    }
+
+    private void updateWallet(Long userId, Float totalFee) {
+        User user = userRepository.findOneById(userId);
+        float currentBalance = user.getWallet();
+        float remainingBalance = currentBalance - totalFee;
+        user.setWallet(remainingBalance);
+        userRepository.save(user);
     }
 }

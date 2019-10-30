@@ -10,7 +10,7 @@ public class UserDto {
 
     private String phoneNumber;
 
-    private Double wallet;
+    private Float wallet;
 
     public Long getId() {
         return id;
@@ -44,11 +44,11 @@ public class UserDto {
         this.phoneNumber = phoneNumber;
     }
 
-    public Double getWallet() {
+    public Float getWallet() {
         return wallet;
     }
 
-    public void setWallet(Double wallet) {
+    public void setWallet(Float wallet) {
         this.wallet = wallet;
     }
 }
