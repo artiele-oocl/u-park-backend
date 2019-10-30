@@ -83,9 +83,15 @@ public class TransactionOrderService {
 
         transOrder.setCheckOut(getCurrentTime());
         calculateTotal(transOrder, parkingLot);
+
+        if (transOrder.getStarRating() == null) {
+            transOrder.setStarRating(0.0);
+        }
+
         transactionOrderRepository.save(transOrder);
 
-        Double averageRate = transactionOrderRepository.findAverageRating(transOrder.getParkingLotId());
+        Double averageRate = getAverageRating(transOrder);
+
         parkingLot.setStarRating(averageRate);
         parkingLotRepository.save(parkingLot);
 
@@ -93,6 +99,14 @@ public class TransactionOrderService {
         map.put("parkingLot", parkingLot);
         return map;
 
+    }
+
+    private Double getAverageRating(TransactionOrder transOrder) {
+        Double sumOfStarRating = transactionOrderRepository.findSumOfStarRating(transOrder.getParkingLotId());
+        Integer countOfTransaction = transactionOrderRepository.findCountOfTransaction(transOrder.getParkingLotId());
+        sumOfStarRating += transOrder.getStarRating();
+        countOfTransaction++;
+        return sumOfStarRating/countOfTransaction;
     }
 
     private void calculateTotal(TransactionOrder transOrder, ParkingLot parkingLot) {
@@ -109,8 +123,8 @@ public class TransactionOrderService {
 
     private void updateWallet(Long userId, Float totalFee) {
         User user = userRepository.findOneById(userId);
-        float currentBalance = user.getWallet();
-        float remainingBalance = currentBalance - totalFee;
+        Float currentBalance = user.getWallet();
+        Float remainingBalance = currentBalance - totalFee;
         user.setWallet(remainingBalance);
         userRepository.save(user);
     }

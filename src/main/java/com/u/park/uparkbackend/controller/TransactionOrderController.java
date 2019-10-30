@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Objects.isNull;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -40,6 +41,9 @@ public class TransactionOrderController {
         Map<String, Object> map = new HashMap<String, Object>();
 
         TransactionOrder transactionOrder = transactionOrderService.getActiveTransactionOrder(userId);
+        if (isNull(transactionOrder)){
+            return new HashMap<>();
+        }
         ParkingLot parkingLot = parkingLotService.getParkingLotbyId(transactionOrder.getParkingLotId());
 
         map.put("transactionOrder", transactionOrder);

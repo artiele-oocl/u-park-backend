@@ -18,6 +18,9 @@ public interface TransactionOrderRepository extends JpaRepository<TransactionOrd
 
     TransactionOrder findOneById(Long transactionId);
 
-    @Query("SELECT AVG(t.starRating) from TransactionOrder t WHERE t.parkingLotId = ?1 AND t.starRating IS NOT NULL")
-    Double findAverageRating(Long parkingLotId);
+    @Query("SELECT SUM(t.starRating) from TransactionOrder t WHERE t.parkingLotId = ?1 AND t.starRating IS NOT NULL")
+    Double findSumOfStarRating(Long parkingLotId);
+
+    @Query("SELECT COUNT(t) from TransactionOrder t WHERE t.parkingLotId = ?1 AND t.starRating IS NOT NULL")
+    Integer findCountOfTransaction(Long parkingLotId);
 }
