@@ -23,7 +23,7 @@ public class User {
     private String password;
 
     @Column(columnDefinition="decimal(15,2) default '0.0'")
-    private Double wallet;
+    private Float wallet;
 
     public Long getId() {
         return id;
@@ -65,16 +65,16 @@ public class User {
         this.password = password;
     }
 
-    public Double getWallet() {
+    public Float getWallet() {
         return wallet;
     }
 
-    public void setWallet(Double wallet) {
+    public void setWallet(Float wallet) {
         this.wallet = wallet;
     }
 
     @PrePersist
     public void setWalletDefaultValue(){
-        wallet = 0.0;
+        wallet = 0.0F;
     }
 }

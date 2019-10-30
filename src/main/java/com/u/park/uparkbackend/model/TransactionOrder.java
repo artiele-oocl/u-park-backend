@@ -14,7 +14,7 @@ public class TransactionOrder {
     private Long parkingLotId;
     private LocalDateTime checkIn;
     private LocalDateTime checkOut;
-    private Double totalFee;
+    private Float totalFee;
     private Double starRating;
 
     public Long getId() {
@@ -41,11 +41,11 @@ public class TransactionOrder {
         this.checkOut = checkOut;
     }
 
-    public Double getTotalFee() {
+    public Float getTotalFee() {
         return totalFee;
     }
 
-    public void setTotalFee(Double totalFee) {
+    public void setTotalFee(Float totalFee) {
         this.totalFee = totalFee;
     }
 
