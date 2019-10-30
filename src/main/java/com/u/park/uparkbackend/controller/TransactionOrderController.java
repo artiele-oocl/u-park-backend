@@ -1,5 +1,6 @@
 package com.u.park.uparkbackend.controller;
 
+import com.u.park.uparkbackend.dto.TransactionOrderDto;
 import com.u.park.uparkbackend.model.ParkingLot;
 import com.u.park.uparkbackend.model.TransactionOrder;
 import com.u.park.uparkbackend.service.ParkingLotService;
@@ -9,9 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -40,9 +43,8 @@ public class TransactionOrderController {
         return map;
     }
 
-//    TODO: Adjust frontend mapping for this function
-//    @GetMapping(path = "/{userId}", produces = APPLICATION_JSON_VALUE)
-//    public ResponseEntity<List<TransactionOrderDto>> getTransactionOrdersOfUser(@PathVariable Long userId) {
-//        return new ResponseEntity<>(transactionOrderService.getTransactionOrdersOfUser(userId), OK);
-//    }
+    @GetMapping(path = "/all/{userId}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<TransactionOrderDto>> getTransactionOrdersOfUser(@PathVariable Long userId) {
+        return new ResponseEntity<>(transactionOrderService.getTransactionOrdersOfUser(userId), OK);
+    }
 }
