@@ -84,6 +84,11 @@ public class TransactionOrderService {
         transOrder.setCheckOut(getCurrentTime());
         calculateTotal(transOrder, parkingLot);
         transactionOrderRepository.save(transOrder);
+
+        Double averageRate = transactionOrderRepository.findAverageRating(transOrder.getParkingLotId());
+        parkingLot.setStarRating(averageRate);
+        parkingLotRepository.save(parkingLot);
+
         map.put("transactionOrder", transOrder);
         map.put("parkingLot", parkingLot);
         return map;
