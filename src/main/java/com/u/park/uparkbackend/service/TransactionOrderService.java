@@ -10,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TransactionOrderService {
@@ -61,5 +64,30 @@ public class TransactionOrderService {
 
         transOrder.setStarRating(transactionOrder.getStarRating());
         transactionOrderRepository.save(transOrder);
+    }
+
+
+    public Map<String, Object> updateAndGetTransaction(Long transactionId) {
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        TransactionOrder transOrder = transactionOrderRepository
+                .findOneById(transactionId);
+        ParkingLot parkingLot = parkingLotRepository
+                .findById(transOrder.getParkingLotId())
+                .orElse(null);
+
+        transOrder.setCheckOut(getCurrentTime());
+        Integer hours = Math.toIntExact(
+                transOrder.getCheckIn()
+                        .until(getCurrentTime(), ChronoUnit.HOURS));
+
+        Float totalFee  = hours * parkingLot.getRate();
+        transOrder.setTotalFee(totalFee);
+        transactionOrderRepository.save(transOrder);
+
+        map.put("transactionOrder", transOrder);
+        map.put("parkingLot", parkingLot);
+        return map;
+
     }
 }

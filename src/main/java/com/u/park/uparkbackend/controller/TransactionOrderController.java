@@ -58,4 +58,9 @@ public class TransactionOrderController {
         transactionOrderService.updateRatings(transactionOrder);
         return new ResponseEntity(HttpStatus.ACCEPTED);
     }
+
+    @PatchMapping(path = "/performCheckOut/{transactionId}", produces = APPLICATION_JSON_VALUE)
+    public Map<String, Object> performCheckOut (@PathVariable("transactionId") Long transactionId){
+        return transactionOrderService.updateAndGetTransaction(transactionId);
+    }
 }
